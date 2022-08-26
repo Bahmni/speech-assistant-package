@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+
+  vakyansh-api:
+    container_name: vakyansh-api
+    image: gcr.io/ekstepspeechrecognition/speech_recognition_model_api:3.2.37
+    environment:
+      - gpu=true
+    volumes:
+      - $PWD/api/deployed_models/:/opt/speech_recognition_open_api/deployed_models/
+
+  vakyansh-proxy:
+    container_name: vakyansh-proxy
+    image: gcr.io/ekstepspeechrecognition/speech_recognition_model_api_proxy:1.0.4
+    ports:
+      - 9009:9009
+    depends_on:
+      - vakyansh-api
+    volumes:
+      - $PWD/proxy/deployed_models/:/opt/speech_recognition_open_api_proxy/deployed_models/
+
+networks:
+  default:
+    name: bahmni-docker_default
+    external: true
