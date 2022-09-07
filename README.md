@@ -25,7 +25,7 @@ git clone git@github.com:amankrayush/speech-assistant-distro.git
 ```
 2. download model for languages (To recognize speech and convert it into text for particular language)
 ```
-sh ./scripts/download_models.sh "english Hindi"
+sh ./scripts/download_models.sh "english hindi"
 ```
 
 3. update the network name in docker-compose.yml file as per your requirement. 
@@ -36,8 +36,9 @@ networks:
     external: true
 ```
   Note : 
-  * speech-Assistant-Distro is intergrated with [Bahmni](https://github.com/Bahmni/bahmni-package), that's why network name is mentioned as 'bahmni-docker_default'
-  * remove the networks field if you don't need external network, else update it with external network name and external network should exist in docker when we are making applications up.
+  * Speech Assistant application is intergrated with [Bahmni](https://github.com/Bahmni/bahmni-package), that's why network name is mentioned as 'bahmni-docker_default'
+  * Remove the networks field if you don't need external network. 
+  * If external network is required, update it with external network name and it should present in the docker.
 
 4. make applications up (make sure models are available - mentioned in step 2)
 ```
@@ -48,7 +49,7 @@ docker-compose up -d
 
 ### Notes:
 
-* speech streaming functionality will be served by [vakyansh proxy server](https://github.com/Open-Speech-EkStep/speech-recognition-open-api-proxy) which has exposed at 9009 port.
+* speech streaming functionality will be served by [vakyansh proxy server](https://github.com/Open-Speech-EkStep/speech-recognition-open-api-proxy) which is exposed at 9009 port.
 
 * To pass a request from frontend proxy server to vakyansh proxy server, read [this](https://socket.io/docs/v4/reverse-proxy/)
 
