@@ -2,6 +2,12 @@ version: '3'
 
 services:
 
+  sa-proxy:
+    container_name: sa-proxy
+    image: sa
+    ports:
+      - 7070:80
+
   vakyansh-api:
     container_name: vakyansh-api
     image: gcr.io/ekstepspeechrecognition/speech_recognition_model_api:3.2.37
