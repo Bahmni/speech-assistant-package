@@ -8,7 +8,7 @@ services:
     environment:
       - gpu=true
     volumes:
-      - $PWD/api/deployed_models/:/opt/speech_recognition_open_api/deployed_models/
+      - ./api/deployed_models/:/opt/speech_recognition_open_api/deployed_models/
 
   vakyansh-proxy:
     container_name: vakyansh-proxy
@@ -18,7 +18,7 @@ services:
     depends_on:
       - vakyansh-api
     volumes:
-      - $PWD/proxy/deployed_models/:/opt/speech_recognition_open_api_proxy/deployed_models/
+      - ./proxy/deployed_models/:/opt/speech_recognition_open_api_proxy/deployed_models/
 
 networks:
   default:
