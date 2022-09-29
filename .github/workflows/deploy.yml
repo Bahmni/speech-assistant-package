@@ -5,7 +5,7 @@ on:
       - main
 
 env:
-  INSTANCE_ID: i-0ab42e637cc211f5e
+  INSTANCE_ID: ***REMOVED***
 
 jobs:
   deploy:
