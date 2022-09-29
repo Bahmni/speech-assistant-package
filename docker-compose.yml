@@ -2,9 +2,9 @@ version: '3'
 
 services:
 
-  sa-proxy:
-    container_name: sa-proxy
-    image: sa
+  speech-assistant-proxy:
+    container_name: speech-assistant-proxy
+    image: speech-assistant-proxy
     ports:
       - 7070:80
 
