@@ -1,0 +1,24 @@
+name: Stop EC2 machine in AWS
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs "At 07:00 PM IST on every day-of-week from Monday through Friday. Below time is mentioned in UTC time zone" (see https://crontab.guru)
+    - cron: '30 13 * * 1-5'
+env:
+  INSTANCE_ID: ***REMOVED***
+
+jobs:
+  start-rds:
+    name: Stop EC2 Machine
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.BAHMNI_AWS_ID }}
+          aws-secret-access-key: ${{ secrets.BAHMNI_AWS_SECRET }}
+          aws-region: ap-south-1
+
+      - name: Stop EC2 Instance
+        run: aws ec2 stop-instances --instance-ids $INSTANCE_ID

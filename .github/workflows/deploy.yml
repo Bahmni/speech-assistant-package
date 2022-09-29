@@ -1,0 +1,38 @@
+name: Deploy Speech-Assistant-Package
+on:
+  push:
+    branches:
+      - main
+
+env:
+  INSTANCE_ID: ***REMOVED***
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.BAHMNI_AWS_ID }}
+          aws-secret-access-key: ${{ secrets.BAHMNI_AWS_SECRET }}
+          aws-region: ap-south-1
+      - name: extract private key
+        run: 'echo "$SSH_KEY" > speech-assistant.pem'
+        env:
+          SSH_KEY: ${{secrets.SPEECH_ASSISTANT_PEM}}
+      - name: extract publicDnsName value
+        run: |
+          publicDnsName=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID | jq '.Reservations[0].Instances[0].PublicDnsName' | tr -d '"')
+          echo '::set-output name=publicDnsName::'$publicDnsName
+        id: get-publicDnsName
+      - name: deploy speech-assistant
+        run: | 
+          sudo ssh -o "StrictHostKeyChecking no" -i "speech-assistant.pem" ec2-user@${{ steps.get-publicDnsName.outputs.publicDnsName }} <<EOF
+          cd speech-assistant-package
+          docker-compose down -v
+          git pull https://github.com/Bahmni/speech-assistant-package.git
+          sh ./scripts/download_models.sh english
+          docker-compose pull
+          docker-compose up -d
