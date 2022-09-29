@@ -4,9 +4,6 @@ on:
     branches:
       - main
 
-env:
-  INSTANCE_ID: ***REMOVED***
-
 jobs:
   deploy:
     name: Deploy
@@ -24,7 +21,7 @@ jobs:
           SSH_KEY: ${{secrets.SPEECH_ASSISTANT_PEM}}
       - name: extract publicDnsName value
         run: |
-          publicDnsName=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID | jq '.Reservations[0].Instances[0].PublicDnsName' | tr -d '"')
+          publicDnsName=$(aws ec2 describe-instances --instance-ids ${{secrets.BAHMNI_INSTANCE_ID}} | jq '.Reservations[0].Instances[0].PublicDnsName' | tr -d '"')
           echo '::set-output name=publicDnsName::'$publicDnsName
         id: get-publicDnsName
       - name: deploy speech-assistant
