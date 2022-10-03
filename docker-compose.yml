@@ -6,7 +6,7 @@ services:
     container_name: speech-assistant-proxy
     image: speech-assistant-proxy
     ports:
-      - 7070:80
+      - 6070:80
 
   vakyansh-api:
     container_name: vakyansh-api

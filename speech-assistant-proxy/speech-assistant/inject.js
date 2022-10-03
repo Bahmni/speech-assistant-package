@@ -1,4 +1,4 @@
-fetch('https://localhost/speech-assistant/feature')
+fetch('speech-assistant/get/feature')
 .then(response => response.text())
 .then(data => {
      if(data === "true"){
