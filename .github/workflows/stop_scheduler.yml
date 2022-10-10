@@ -5,8 +5,6 @@ on:
   schedule:
     # Runs "At 07:00 PM IST on every day-of-week from Monday through Friday. Below time is mentioned in UTC time zone" (see https://crontab.guru)
     - cron: '30 13 * * 1-5'
-env:
-  INSTANCE_ID: ***REMOVED***
 
 jobs:
   start-rds:
@@ -21,4 +19,4 @@ jobs:
           aws-region: ap-south-1
 
       - name: Stop EC2 Instance
-        run: aws ec2 stop-instances --instance-ids $INSTANCE_ID
+        run: aws ec2 stop-instances --instance-ids ${{secrets.BAHMNI_INSTANCE_ID}}

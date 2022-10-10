@@ -5,14 +5,13 @@ on:
   schedule:
     # Runs "At 09:00 AM IST on every day-of-week from Monday through Friday. Below time is mentioned in UTC time zone" (see https://crontab.guru)
     - cron: '30 3 * * 1-5'
-env:
-  INSTANCE_ID: ***REMOVED***
 
 jobs:
   start-rds:
     name: Start EC2 Machine
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -21,7 +20,7 @@ jobs:
           aws-region: ap-south-1
 
       - name: Start EC2 Instance
-        run: aws ec2 start-instances --instance-ids $INSTANCE_ID
+        run: aws ec2 start-instances --instance-ids ${{secrets.BAHMNI_INSTANCE_ID}}
       - name: extract private key
         run: 'echo "$SSH_KEY" > speech-assistant.pem'
         env:
@@ -30,7 +29,7 @@ jobs:
         run: sleep 60s
       - name: extract publicDnsName value
         run: |
-          publicDnsName=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID | jq '.Reservations[0].Instances[0].PublicDnsName' | tr -d '"')
+          publicDnsName=$(aws ec2 describe-instances --instance-ids ${{secrets.BAHMNI_INSTANCE_ID}} | jq '.Reservations[0].Instances[0].PublicDnsName' | tr -d '"')
           echo '::set-output name=publicDnsName::'$publicDnsName
         id: get-publicDnsName
       - name: start bahmni and speech-assistant application
@@ -39,3 +38,13 @@ jobs:
           sudo service docker start
           docker-compose -f bahmni-package/bahmni-docker/docker-compose.yml up -d
           docker-compose -f speech-assistant-package/docker-compose.yml up -d
+      - name: extract PublicIpAddress value
+        run: |
+          publicIpAddress=$(aws ec2 describe-instances --instance-ids ${{secrets.BAHMNI_INSTANCE_ID}} | jq '.Reservations[0].Instances[0].PublicIpAddress' | tr -d '"')
+          echo '::set-output name=publicIpAddress::'$publicIpAddress
+        id: get-publicIpAddress
+      - name: Route53 alias value update
+        run: |
+          jq '.Changes[].ResourceRecordSet.ResourceRecords[].Value = "${{ steps.get-publicIpAddress.outputs.publicIpAddress }}"' aws/route53/speech.mybahmni.in.json > recordset 
+          aws route53 change-resource-record-sets --hosted-zone-id ${{ secrets.BAHMNI_AWS_HOSTED_ZONE_ID }} --change-batch file://recordset
+      

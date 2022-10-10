@@ -1,0 +1,14 @@
+{
+    "Comment": "Creating Alias resource record set in Route 53",
+    "Changes": [
+      {
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+          "Name": "speech.mybahmni.in.",
+          "Type": "A",
+          "TTL": 300,
+          "ResourceRecords": [{"Value": "dummy value"}]
+        }
+      }
+    ]
+  }
